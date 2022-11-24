@@ -27,8 +27,8 @@ def make_bitmap(size):
         bitmap.append(row)
     return bitmap
 
-def make_img(arr, size, name):
-    scl =  size[0]/max(len(arr),len(arr[1]))
+def make_img(arr, scl, name):
+    size = (len(arr[0])*scl, len(arr)*scl)
     img = Image.new("1", size)
     draw = ImageDraw.Draw(img)
     for y in range(len(arr)):
@@ -39,4 +39,4 @@ def make_img(arr, size, name):
                 draw.rectangle([x*scl,y*scl,(x*scl)+scl,(y*scl)+scl],fill = 1)
     img.save(f'Generated_art/{name}.jpg')
 
-make_img(make_bitmap((6,6)),(1000,1000),'jakub')
+make_img(make_bitmap((16,7)),10,'jakub')
