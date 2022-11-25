@@ -8,8 +8,8 @@ from color_pallet import color_choices
 # sets random color scheme from the list provided in the color_pallet.py file
 color_scheme = random.choice(color_choices)
 
-# converts an RGB value to a HEX value in the right format so that PIL can use it
-def RGB2HEX(rgb: list) -> str:
+# converts an RGBA value to a HEX value in the right format so that PIL can use it
+def RGBA2HEX(rgb: list) -> str:
     hex_value = '#'
     for i in rgb:
         value = f'{hex(i)[2::]}'
@@ -17,6 +17,11 @@ def RGB2HEX(rgb: list) -> str:
             value = f'0{value}'
         hex_value += value
     return hex_value
+
+# converting color scheme
+converted_color_scheme = []
+for i in color_scheme:
+    converted_color_scheme.append(RGBA2HEX(i))
 
 # flips an arr and add it to the end of the inputed arr
 def mirror(arr: list, even=True) -> list:
@@ -38,11 +43,11 @@ def make_img_arr(size: tuple = (10,10)) -> list:
         row = []
         if size[1]%2==0:
             for j in range(size[1]//2):
-                row.append(random.choice(color_scheme))
+                row.append(random.choice(converted_color_scheme))
             row = mirror(row)
         else:
             for j in range((size[1]//2)+1):
-                row.append(random.choice(color_scheme))
+                row.append(random.choice(converted_color_scheme))
             row = mirror(row,False)
         img_arr.append(row)
     return img_arr
@@ -50,13 +55,14 @@ def make_img_arr(size: tuple = (10,10)) -> list:
 # takes the 2D arr which represents the img and turns it into a PIL image object
 def make_img(arr: list, scl: int, name: str) -> Image.Image:
     size = (len(arr[0])*scl, len(arr)*scl)
-    img = Image.new("RGB", size, '#f1efac')
+    img = Image.new("RGBA", size, '#f1efac')
     draw = ImageDraw.Draw(img)
     for y in range(len(arr)):
         for x in range(len(arr[y])):
-            draw.rectangle([x*scl,y*scl,(x*scl)+scl,(y*scl)+scl],fill = RGB2HEX(arr[y][x]))
+            draw.rectangle([x*scl,y*scl,(x*scl)+scl,(y*scl)+scl],fill = arr[y][x])
     return img
 
 # creates and saves img
 img = make_img(make_img_arr((20,20)),10,'jakub')
-img.save('Generated_art/jakub.jpg')
+img.thumbnail((500,500))
+img.save('Generated_art/jakub.png')
